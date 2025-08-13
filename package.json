@@ -9,6 +9,7 @@
   "scripts": {
     "test:gen": "brittle -r test/all.js test/*.test.js",
     "test": "brittle-bare --coverage test/all.js",
+    "test:node": "brittle-node --coverage test/all.js",
     "lint": "standard"
   },
   "imports": {

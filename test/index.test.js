@@ -14,7 +14,7 @@ const rig = () => {
   if (global.Pear !== null) throw Error(`Prior Pear global not cleaned up: ${global.Pear}`)
 
   class RigAPI {
-    static RTI = { checkout: { key: dirname, length: null, fork: null } }
+    static RTI = { checkout: { key: dirname, length: null, fork: null }, mount: __dirname }
   }
   global.Pear = new RigAPI()
 
@@ -374,11 +374,11 @@ test('state.applink', async function (t) {
   const helloWorld = path.join(dirname, 'fixtures', 'hello-world')
 
   const State = require('..')
-
+  const cwd = global.process?.cwd ?? os.cwd
   t.is(new State({ dir: helloWorld, link: helloWorld, flags: {} }).applink, pathToFileURL(helloWorld).href)
   t.is(new State({ dir: helloWorld, link: helloWorld + '/some/route', flags: {} }).applink, pathToFileURL(helloWorld).href)
   t.is(new State({ link: 'pear://b9abnxwa71999xsweicj6ndya8w9w39z7ssg43pkohd76kzcgpmo/check?query', flags: {} }).applink, 'pear://b9abnxwa71999xsweicj6ndya8w9w39z7ssg43pkohd76kzcgpmo')
-  t.is(new State({ link: 'file:///a/b/c#foo', flags: {} }).applink, pathToFileURL(os.cwd()).href)
+  t.is(new State({ link: 'file:///a/b/c#foo', flags: {} }).applink, pathToFileURL(cwd()).href)
 })
 
 test('state.route', async function (t) {
