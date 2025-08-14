@@ -16,6 +16,9 @@
     "fs": {
       "bare": "bare-fs"
     },
+    "fs/promises": {
+      "bare": "bare-fs/promises"
+    },
     "path": {
       "bare": "bare-path"
     },
