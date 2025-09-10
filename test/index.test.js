@@ -23,7 +23,7 @@ const rig = () => {
   }
 }
 
-test('State.constructor initializes with minimal parameters', async function (t) {
+test('initializes with minimal parameters', async function (t) {
   t.plan(2)
 
   const { teardown } = rig()
@@ -36,7 +36,7 @@ test('State.constructor initializes with minimal parameters', async function (t)
   t.not(state.cwd === null, 'cwd should be initialized')
 })
 
-test('State.constructor sets NODE_ENV to production in stage mode', async function (t) {
+test('sets NODE_ENV to production in stage mode', async function (t) {
   t.plan(1)
 
   const { teardown } = rig()
@@ -48,7 +48,7 @@ test('State.constructor sets NODE_ENV to production in stage mode', async functi
   t.is(state.env.NODE_ENV, 'production', 'NODE_ENV should be set to production in stage mode')
 })
 
-test('State.constructor sets NODE_ENV to production when run param is true and not in dev mode', async function (t) {
+test('sets NODE_ENV to production when run param is true and not in dev mode', async function (t) {
   t.plan(1)
 
   const { teardown } = rig()
@@ -60,7 +60,7 @@ test('State.constructor sets NODE_ENV to production when run param is true and n
   t.is(state.env.NODE_ENV, 'production')
 })
 
-test('State.constructor handles invalid flags gracefully', async function (t) {
+test('handles invalid flags gracefully', async function (t) {
   t.plan(1)
 
   const { teardown } = rig()
@@ -169,7 +169,7 @@ test('State.configFrom extracts correct properties from state', async function (
   t.ok(config.env !== undefined, 'configFrom should extract env property from state')
 })
 
-test('State.constructor throws error for invalid storage path', async function (t) {
+test('throws error for invalid storage path', async function (t) {
   t.plan(1)
 
   const { teardown } = rig()
@@ -395,7 +395,7 @@ test('state.route', async function (t) {
   t.is(new State({ link: 'pear://b9abnxwa71999xsweicj6ndya8w9w39z7ssg43pkohd76kzcgpmo/check?query', flags: {} }).route, '/check')
 })
 
-test('State.constructor sets pid', async function (t) {
+test('sets pid', async function (t) {
   t.plan(2)
 
   const { teardown } = rig()
