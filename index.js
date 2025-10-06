@@ -9,7 +9,11 @@ const { PLATFORM_DIR, SWAP, RUNTIME } = require('pear-constants')
 const CWD = isBare ? os.cwd() : process.cwd()
 const ENV = isBare ? require('bare-env') : process.env
 const plink = require('pear-link')
-const { ERR_INVALID_PROJECT_DIR, ERR_INVALID_APP_STORAGE, ERR_INVALID_APP_NAME } = require('pear-errors')
+const {
+  ERR_INVALID_PROJECT_DIR,
+  ERR_INVALID_APP_STORAGE,
+  ERR_INVALID_APP_NAME
+} = require('pear-errors')
 
 module.exports = class State {
   env = null
@@ -31,7 +35,7 @@ module.exports = class State {
   version = { key: null, length: 0, fork: 0 }
   options = null
   manifest = null
-  static async localPkg (state) {
+  static async localPkg(state) {
     let pkg
     try {
       pkg = JSON.parse(await fsp.readFile(path.join(state.dir, 'package.json')))
@@ -45,15 +49,18 @@ module.exports = class State {
     return pkg
   }
 
-  static appname (pkg) {
+  static appname(pkg) {
     return pkg?.pear?.name ?? pkg?.name ?? null
   }
 
-  static async build (state, pkg = null) {
+  static async build(state, pkg = null) {
     if (state.manifest) return state.manifest
     const originDir = state.dir
     if (pkg === null && state.key === null) pkg = await this.localPkg(state)
-    if (pkg === null) throw ERR_INVALID_PROJECT_DIR(`"package.json not found from: ${originDir}. Pear project must have a package.json`)
+    if (pkg === null)
+      throw ERR_INVALID_PROJECT_DIR(
+        `"package.json not found from: ${originDir}. Pear project must have a package.json`
+      )
     state.pkg = pkg
     state.options = state.pkg?.pear ?? {}
 
@@ -62,13 +69,18 @@ module.exports = class State {
     state.main = state.options.main ?? pkg?.main ?? 'index.js'
 
     const invalidName = /^[@/a-z0-9-_]+$/.test(state.name) === false
-    if (invalidName) throw ERR_INVALID_APP_NAME('App name must be lowercase and one word, and may contain letters, numbers, hyphens (-), underscores (_), forward slashes (/) and asperands (@).')
+    if (invalidName)
+      throw ERR_INVALID_APP_NAME(
+        'App name must be lowercase and one word, and may contain letters, numbers, hyphens (-), underscores (_), forward slashes (/) and asperands (@).'
+      )
 
     state.links = {
-      ...Object.fromEntries(Object.entries((state.options.links ?? {}))),
+      ...Object.fromEntries(Object.entries(state.options.links ?? {})),
       ...(state.links ?? {})
     }
-    state.entrypoints = Array.isArray(state.options.stage?.entrypoints) ? state.options.stage?.entrypoints : []
+    state.entrypoints = Array.isArray(state.options.stage?.entrypoints)
+      ? state.options.stage?.entrypoints
+      : []
     state.routes = state.options.routes || null
     const unrouted = Array.isArray(state.options.unrouted) ? state.options.unrouted : []
     state.unrouted = Array.from(new Set([...unrouted, ...state.entrypoints]))
@@ -79,14 +91,15 @@ module.exports = class State {
     return state.manifest
   }
 
-  static route (state) {
+  static route(state) {
     let result = null
     if (state.prerunning || !state.routes) {
       result = { entrypoint: state.route, routed: false }
     } else if (state.unrouted.some((unroute) => state.route.startsWith(unroute))) {
       result = { entrypoint: state.route, routed: false }
     } else {
-      let route = typeof state.routes === 'string' ? state.routes : (state.routes[state.route] ?? state.route)
+      let route =
+        typeof state.routes === 'string' ? state.routes : (state.routes[state.route] ?? state.route)
       if (route[0] === '.') route = route.length === 1 ? '/' : route.slice(1)
       result = { entrypoint: route, routed: true }
     }
@@ -95,39 +108,147 @@ module.exports = class State {
     return result
   }
 
-  static storageFromLink (link) {
+  static storageFromLink(link) {
     const parsed = typeof link === 'string' ? plink.parse(link) : link
     const appStorage = path.join(PLATFORM_DIR, 'app-storage')
     return parsed.protocol !== 'pear:'
       ? path.join(appStorage, 'by-random', crypto.randomBytes(16).toString('hex'))
-      : path.join(appStorage, 'by-dkey', crypto.discoveryKey(hypercoreid.decode(parsed.drive.key)).toString('hex'))
+      : path.join(
+          appStorage,
+          'by-dkey',
+          crypto.discoveryKey(hypercoreid.decode(parsed.drive.key)).toString('hex')
+        )
   }
 
-  static configFrom (state) {
-    const { id, startId, key, links, alias, env, gui, assets, options, checkpoint, checkout, flags, dev, stage, storage, name, main, args, channel, release, applink, query, fragment, link, linkData, entrypoint, route, routes, dir, dht, prerunning, version } = state
+  static configFrom(state) {
+    const {
+      id,
+      startId,
+      key,
+      links,
+      alias,
+      env,
+      gui,
+      assets,
+      options,
+      checkpoint,
+      checkout,
+      flags,
+      dev,
+      stage,
+      storage,
+      name,
+      main,
+      args,
+      channel,
+      release,
+      applink,
+      query,
+      fragment,
+      link,
+      linkData,
+      entrypoint,
+      route,
+      routes,
+      dir,
+      dht,
+      prerunning,
+      version
+    } = state
     const pearDir = PLATFORM_DIR
     const swapDir = SWAP
-    return { id, startId, key, links, alias, env, gui, assets, options, checkpoint, checkout, flags, dev, stage, storage, name, main, args, channel, release, applink, query, fragment, link, linkData, entrypoint, route, routes, dir, dht, prerunning, pearDir, swapDir, length: version?.length, fork: version?.fork }
+    return {
+      id,
+      startId,
+      key,
+      links,
+      alias,
+      env,
+      gui,
+      assets,
+      options,
+      checkpoint,
+      checkout,
+      flags,
+      dev,
+      stage,
+      storage,
+      name,
+      main,
+      args,
+      channel,
+      release,
+      applink,
+      query,
+      fragment,
+      link,
+      linkData,
+      entrypoint,
+      route,
+      routes,
+      dir,
+      dht,
+      prerunning,
+      pearDir,
+      swapDir,
+      length: version?.length,
+      fork: version?.fork
+    }
   }
 
-  update (state) {
+  update(state) {
     Object.assign(this, state)
     this.#onupdate()
   }
 
-  constructor (params = {}) {
-    const { dht, link = '.', startId = null, id = null, args = null, env = ENV, cwd = CWD, dir = cwd, cmdArgs, onupdate = () => {}, flags = {}, run, storage = null, pid } = params
+  constructor(params = {}) {
     const {
-      appling, channel, devtools, checkout, stage, updates, updatesDiff,
-      links = '', prerunning = false, dev = false, parent = null,
-      followSymlinks, unsafeClearAppStorage, chromeWebrtcInternals
+      dht,
+      link = '.',
+      startId = null,
+      id = null,
+      args = null,
+      env = ENV,
+      cwd = CWD,
+      dir = cwd,
+      cmdArgs,
+      onupdate = () => {},
+      flags = {},
+      run,
+      storage = null,
+      pid
+    } = params
+    const {
+      appling,
+      channel,
+      devtools,
+      checkout,
+      stage,
+      updates,
+      updatesDiff,
+      links = '',
+      prerunning = false,
+      dev = false,
+      parent = null,
+      followSymlinks,
+      unsafeClearAppStorage,
+      chromeWebrtcInternals
     } = flags
     const parsedLink = plink.parse(link)
-    const { drive: { alias = null, key = null } = {}, pathname: route = '', protocol, origin, hash, search } = parsedLink
+    const {
+      drive: { alias = null, key = null } = {},
+      pathname: route = '',
+      protocol,
+      origin,
+      hash,
+      search
+    } = parsedLink
     let pathname = protocol === 'file:' && isWindows ? route.slice(1) : route
     // for on disk route support, this relies on passed in dir being the actual project dir:
     if (protocol === 'file:') pathname = pathname.slice(dir.length)
-    const store = flags.tmpStore ? path.join(os.tmpdir(), crypto.randomBytes(16).toString('hex')) : flags.store
+    const store = flags.tmpStore
+      ? path.join(os.tmpdir(), crypto.randomBytes(16).toString('hex'))
+      : flags.store
     this.#onupdate = onupdate
     this.startId = startId
     this.dht = dht
@@ -151,7 +272,11 @@ module.exports = class State {
     this.route = pathname
     this.linkData = this.route?.startsWith('/') ? this.route.slice(1) : this.route
     this.key = key
-    this.link = link ? (link.startsWith(protocol) ? link : plink.normalize(plink.serialize(parsedLink))) : null
+    this.link = link
+      ? link.startsWith(protocol)
+        ? link
+        : plink.normalize(plink.serialize(parsedLink))
+      : null
     this.applink = key ? origin : plink.normalize(plink.serialize(plink.parse(this.dir)))
     this.alias = alias
     this.cmdArgs = cmdArgs
@@ -172,9 +297,21 @@ module.exports = class State {
       links[key] = value
       return links
     }, {})
-    this.storage = this.store ? (path.isAbsolute(this.store) ? this.store : path.resolve(this.cwd, this.store)) : this.storage
-    const invalidStorage = this.key === null && this.storage !== null &&
-      this.storage.startsWith(this.dir) && this.storage.includes(path.sep + 'pear' + path.sep + 'pear' + path.sep) === false
-    if (invalidStorage) throw ERR_INVALID_APP_STORAGE('Application Storage may not be inside the project directory. --store "' + this.storage + '" is invalid')
+    this.storage = this.store
+      ? path.isAbsolute(this.store)
+        ? this.store
+        : path.resolve(this.cwd, this.store)
+      : this.storage
+    const invalidStorage =
+      this.key === null &&
+      this.storage !== null &&
+      this.storage.startsWith(this.dir) &&
+      this.storage.includes(path.sep + 'pear' + path.sep + 'pear' + path.sep) === false
+    if (invalidStorage)
+      throw ERR_INVALID_APP_STORAGE(
+        'Application Storage may not be inside the project directory. --store "' +
+          this.storage +
+          '" is invalid'
+      )
   }
 }
