@@ -11,8 +11,7 @@ const dirname = __dirname
 global.Pear = null
 
 const rig = () => {
-  if (global.Pear !== null)
-    throw Error(`Prior Pear global not cleaned up: ${global.Pear}`)
+  if (global.Pear !== null) throw Error(`Prior Pear global not cleaned up: ${global.Pear}`)
 
   class RigAPI {
     static RTI = {
@@ -51,11 +50,7 @@ test('sets NODE_ENV to production in stage mode', async function (t) {
   const State = require('..')
   const state = new State({ flags: { stage: true } })
 
-  t.is(
-    state.env.NODE_ENV,
-    'production',
-    'NODE_ENV should be set to production in stage mode'
-  )
+  t.is(state.env.NODE_ENV, 'production', 'NODE_ENV should be set to production in stage mode')
 })
 
 test('sets NODE_ENV to production when run param is true and not in dev mode', async function (t) {
@@ -79,11 +74,7 @@ test('handles invalid flags gracefully', async function (t) {
   const State = require('..')
   const state = new State({ flags: { invalidFlag: true } })
 
-  t.is(
-    state.flags.invalidFlag,
-    true,
-    'invalid flags should be preserved in state'
-  )
+  t.is(state.flags.invalidFlag, true, 'invalid flags should be preserved in state')
 })
 
 test('State.update method merges new state properties', async function (t) {
@@ -129,11 +120,7 @@ test('State.route method applies routes correctly', async function (t) {
   const State = require('..')
   const result = State.route({ route: pathname, routes, unrouted: [] })
 
-  t.is(
-    result.entrypoint,
-    '/new/path',
-    'route method should apply routes correctly'
-  )
+  t.is(result.entrypoint, '/new/path', 'route method should apply routes correctly')
   t.is(result.routed, true)
 })
 
@@ -194,10 +181,7 @@ test('State.configFrom extracts correct properties from state', async function (
   const state = new State({ flags: {} })
   const config = State.configFrom(state)
 
-  t.ok(
-    config.env !== undefined,
-    'configFrom should extract env property from state'
-  )
+  t.ok(config.env !== undefined, 'configFrom should extract env property from state')
 })
 
 test('throws error for invalid storage path', async function (t) {
@@ -293,10 +277,7 @@ test('State.localPkg recurses to parent if package.json missing', async function
     fs.rmSync(parentDir, { recursive: true, force: true })
   })
 
-  fs.writeFileSync(
-    path.join(parentDir, 'package.json'),
-    JSON.stringify({ name: 'parentpkg' })
-  )
+  fs.writeFileSync(path.join(parentDir, 'package.json'), JSON.stringify({ name: 'parentpkg' }))
 
   const result = await State.localPkg({ dir: childDir })
   t.is(result.name, 'parentpkg', 'localPkg finds parent package.json')
@@ -338,10 +319,7 @@ test('State.localPkg throws error for invalid JSON in package.json', async funct
     await State.localPkg({ dir })
     t.fail('localPkg should throw an error for invalid JSON')
   } catch (err) {
-    t.ok(
-      err instanceof SyntaxError,
-      'localPkg throws SyntaxError for invalid JSON'
-    )
+    t.ok(err instanceof SyntaxError, 'localPkg throws SyntaxError for invalid JSON')
   }
 })
 
@@ -443,8 +421,7 @@ test('state.applink', async function (t) {
     pathToFileURL(helloWorld).href
   )
   t.is(
-    new State({ dir: helloWorld, link: helloWorld + '/some/route', flags: {} })
-      .applink,
+    new State({ dir: helloWorld, link: helloWorld + '/some/route', flags: {} }).applink,
     pathToFileURL(helloWorld).href
   )
   t.is(
@@ -454,10 +431,7 @@ test('state.applink', async function (t) {
     }).applink,
     'pear://b9abnxwa71999xsweicj6ndya8w9w39z7ssg43pkohd76kzcgpmo'
   )
-  t.is(
-    new State({ link: 'file:///a/b/c#foo', flags: {} }).applink,
-    pathToFileURL(cwd()).href
-  )
+  t.is(new State({ link: 'file:///a/b/c#foo', flags: {} }).applink, pathToFileURL(cwd()).href)
 })
 
 test('state.route', async function (t) {
@@ -471,8 +445,7 @@ test('state.route', async function (t) {
   const State = require('..')
 
   t.is(
-    new State({ dir: helloWorld, link: helloWorld + '/some/route', flags: {} })
-      .route,
+    new State({ dir: helloWorld, link: helloWorld + '/some/route', flags: {} }).route,
     '/some/route'
   )
   t.is(

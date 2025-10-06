@@ -40,18 +40,9 @@ module.exports = class State {
     try {
       pkg = JSON.parse(await fsp.readFile(path.join(state.dir, 'package.json')))
     } catch (err) {
-      if (
-        err.code !== 'ENOENT' &&
-        err.code !== 'EISDIR' &&
-        err.code !== 'ENOTDIR'
-      )
-        throw err
+      if (err.code !== 'ENOENT' && err.code !== 'EISDIR' && err.code !== 'ENOTDIR') throw err
       const parent = path.dirname(state.dir)
-      if (
-        parent === state.dir ||
-        path.resolve(state.dir) === path.resolve(parent)
-      )
-        return null
+      if (parent === state.dir || path.resolve(state.dir) === path.resolve(parent)) return null
       state.dir = parent
       return this.localPkg(state)
     }
@@ -91,9 +82,7 @@ module.exports = class State {
       ? state.options.stage?.entrypoints
       : []
     state.routes = state.options.routes || null
-    const unrouted = Array.isArray(state.options.unrouted)
-      ? state.options.unrouted
-      : []
+    const unrouted = Array.isArray(state.options.unrouted) ? state.options.unrouted : []
     state.unrouted = Array.from(new Set([...unrouted, ...state.entrypoints]))
     const { entrypoint, routed } = this.route(state)
     state.entrypoint = entrypoint
@@ -106,22 +95,16 @@ module.exports = class State {
     let result = null
     if (state.prerunning || !state.routes) {
       result = { entrypoint: state.route, routed: false }
-    } else if (
-      state.unrouted.some((unroute) => state.route.startsWith(unroute))
-    ) {
+    } else if (state.unrouted.some((unroute) => state.route.startsWith(unroute))) {
       result = { entrypoint: state.route, routed: false }
     } else {
       let route =
-        typeof state.routes === 'string'
-          ? state.routes
-          : (state.routes[state.route] ?? state.route)
+        typeof state.routes === 'string' ? state.routes : (state.routes[state.route] ?? state.route)
       if (route[0] === '.') route = route.length === 1 ? '/' : route.slice(1)
       result = { entrypoint: route, routed: true }
     }
-    if (result.entrypoint.startsWith('/') === false)
-      result.entrypoint = '/' + result.entrypoint
-    else if (result.entrypoint.startsWith('./'))
-      result.entrypoint = result.entrypoint.slice(1)
+    if (result.entrypoint.startsWith('/') === false) result.entrypoint = '/' + result.entrypoint
+    else if (result.entrypoint.startsWith('./')) result.entrypoint = result.entrypoint.slice(1)
     return result
   }
 
@@ -129,17 +112,11 @@ module.exports = class State {
     const parsed = typeof link === 'string' ? plink.parse(link) : link
     const appStorage = path.join(PLATFORM_DIR, 'app-storage')
     return parsed.protocol !== 'pear:'
-      ? path.join(
-          appStorage,
-          'by-random',
-          crypto.randomBytes(16).toString('hex')
-        )
+      ? path.join(appStorage, 'by-random', crypto.randomBytes(16).toString('hex'))
       : path.join(
           appStorage,
           'by-dkey',
-          crypto
-            .discoveryKey(hypercoreid.decode(parsed.drive.key))
-            .toString('hex')
+          crypto.discoveryKey(hypercoreid.decode(parsed.drive.key)).toString('hex')
         )
   }
 
@@ -293,18 +270,14 @@ module.exports = class State {
     this.fragment = hash ? hash.slice(1) : ''
     this.query = search ? search.slice(1) : ''
     this.route = pathname
-    this.linkData = this.route?.startsWith('/')
-      ? this.route.slice(1)
-      : this.route
+    this.linkData = this.route?.startsWith('/') ? this.route.slice(1) : this.route
     this.key = key
     this.link = link
       ? link.startsWith(protocol)
         ? link
         : plink.normalize(plink.serialize(parsedLink))
       : null
-    this.applink = key
-      ? origin
-      : plink.normalize(plink.serialize(plink.parse(this.dir)))
+    this.applink = key ? origin : plink.normalize(plink.serialize(plink.parse(this.dir)))
     this.alias = alias
     this.cmdArgs = cmdArgs
     this.id = id
@@ -333,9 +306,7 @@ module.exports = class State {
       this.key === null &&
       this.storage !== null &&
       this.storage.startsWith(this.dir) &&
-      this.storage.includes(
-        path.sep + 'pear' + path.sep + 'pear' + path.sep
-      ) === false
+      this.storage.includes(path.sep + 'pear' + path.sep + 'pear' + path.sep) === false
     if (invalidStorage)
       throw ERR_INVALID_APP_STORAGE(
         'Application Storage may not be inside the project directory. --store "' +
