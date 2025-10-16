@@ -11,6 +11,7 @@ const ENV = isBare ? require('bare-env') : process.env
 const plink = require('pear-link')
 const { ERR_INVALID_PROJECT_DIR, ERR_INVALID_APP_STORAGE, ERR_INVALID_APP_NAME } = require('pear-errors')
 
+// Adding comment here to test github ci
 module.exports = class State {
   env = null
   channel = null
