@@ -1,11 +1,14 @@
 {
   "name": "pear-state",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "index.js",
   "type": "commonjs",
   "description": "Pear state",
   "license": "Apache-2.0",
-  "files": ["bare/", "node/"],
+  "files": [
+    "bare/",
+    "node/"
+  ],
   "author": "Holepunch Inc",
   "scripts": {
     "format": "prettier --write .",
