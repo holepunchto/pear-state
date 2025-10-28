@@ -7,7 +7,7 @@ const hypercoreid = require('hypercore-id-encoding')
 const crypto = require('hypercore-crypto')
 const { PLATFORM_DIR, SWAP, RUNTIME } = require('pear-constants')
 const CWD = isBare ? os.cwd() : process.cwd()
-const ENV = isBare ? require('bare-env') : process.env
+const ENV = require('#env')
 const plink = require('pear-link')
 const {
   ERR_INVALID_PROJECT_DIR,
