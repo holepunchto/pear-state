@@ -14,12 +14,17 @@ const rig = () => {
   if (global.Pear !== null) throw Error(`Prior Pear global not cleaned up: ${global.Pear}`)
 
   class RigAPI {
-    static RTI = { checkout: { key: dirname, length: null, fork: null }, mount: __dirname }
+    static RTI = {
+      checkout: { key: dirname, length: null, fork: null },
+      mount: __dirname
+    }
   }
   global.Pear = new RigAPI()
 
   return {
-    teardown: () => { global.Pear = null }
+    teardown: () => {
+      global.Pear = null
+    }
   }
 }
 
@@ -96,7 +101,11 @@ test('State.route method returns pathname when no routes are defined', async fun
   const State = require('..')
   const result = State.route({ route: pathname, routes: null, unrouted: [] })
 
-  t.is(result.entrypoint, pathname, 'route method should return pathname when no routes are defined')
+  t.is(
+    result.entrypoint,
+    pathname,
+    'route method should return pathname when no routes are defined'
+  )
   t.is(result.routed, false)
 })
 
@@ -140,7 +149,10 @@ test('State.storageFromLink generates storage path for non-pear links', async fu
   const link = 'file:///some/path/to/a/file.js'
   const result = State.storageFromLink(link)
 
-  t.ok(result.includes('by-random'), 'storageFromLink should generate path under by-random for non-pear links')
+  t.ok(
+    result.includes('by-random'),
+    'storageFromLink should generate path under by-random for non-pear links'
+  )
 })
 
 test('State.storageFromLink generates storage path for pear links', async function (t) {
@@ -153,7 +165,10 @@ test('State.storageFromLink generates storage path for pear links', async functi
   const link = 'pear://keet'
   const result = State.storageFromLink(link)
 
-  t.ok(result.includes('by-dkey'), 'storageFromLink should generate path under by-dkey for pear links')
+  t.ok(
+    result.includes('by-dkey'),
+    'storageFromLink should generate path under by-dkey for pear links'
+  )
 })
 
 test('State.configFrom extracts correct properties from state', async function (t) {
@@ -184,7 +199,9 @@ test('throws error for invalid storage path', async function (t) {
       dir: '/valid/project/dir',
       storage: '/valid/project/dir/storage'
     })
-    if (state) { t.fail('state should not be initialized') }
+    if (state) {
+      t.fail('state should not be initialized')
+    }
   }, ERR_INVALID_APP_STORAGE())
 })
 
@@ -232,9 +249,14 @@ test('State.localPkg returns package.json contents', async function (t) {
   const State = require('..')
   const dir = path.join(os.tmpdir(), 'pear-test-localpkg-' + Date.now())
   fs.mkdirSync(dir, { recursive: true })
-  t.teardown(() => { fs.rmSync(dir, { recursive: true, force: true }) })
+  t.teardown(() => {
+    fs.rmSync(dir, { recursive: true, force: true })
+  })
 
-  fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify({ name: 'testpkg', pear: { name: 'pearname' } }))
+  fs.writeFileSync(
+    path.join(dir, 'package.json'),
+    JSON.stringify({ name: 'testpkg', pear: { name: 'pearname' } })
+  )
 
   const result = await State.localPkg({ dir })
   t.is(result.name, 'testpkg', 'localPkg reads package.json')
@@ -251,7 +273,9 @@ test('State.localPkg recurses to parent if package.json missing', async function
   const parentDir = path.join(os.tmpdir(), 'pear-test-parent-' + Date.now())
   const childDir = path.join(parentDir, 'child')
   fs.mkdirSync(childDir, { recursive: true })
-  t.teardown(() => { fs.rmSync(parentDir, { recursive: true, force: true }) })
+  t.teardown(() => {
+    fs.rmSync(parentDir, { recursive: true, force: true })
+  })
 
   fs.writeFileSync(path.join(parentDir, 'package.json'), JSON.stringify({ name: 'parentpkg' }))
 
@@ -268,7 +292,9 @@ test('State.localPkg returns null if no package.json found', async function (t) 
   const State = require('..')
   const dir = path.join(os.tmpdir(), 'pear-test-lone-' + Date.now())
   fs.mkdirSync(dir, { recursive: true })
-  t.teardown(() => { fs.rmSync(dir, { recursive: true, force: true }) })
+  t.teardown(() => {
+    fs.rmSync(dir, { recursive: true, force: true })
+  })
 
   const result = await State.localPkg({ dir })
   t.is(result, null, 'localPkg returns null if no package.json found')
@@ -283,7 +309,9 @@ test('State.localPkg throws error for invalid JSON in package.json', async funct
   const State = require('..')
   const dir = path.join(os.tmpdir(), 'pear-test-invalid-json-' + Date.now())
   fs.mkdirSync(dir, { recursive: true })
-  t.teardown(() => { fs.rmSync(dir, { recursive: true, force: true }) })
+  t.teardown(() => {
+    fs.rmSync(dir, { recursive: true, force: true })
+  })
 
   fs.writeFileSync(path.join(dir, 'package.json'), '{ invalid json }')
 
@@ -296,28 +324,35 @@ test('State.localPkg throws error for invalid JSON in package.json', async funct
 })
 
 // Disabled on Windows because chmod 000 isn't supported there
-test('State.localPkg throws error for inaccessible directory', { skip: isWindows }, async function (t) {
-  t.plan(1)
+test(
+  'State.localPkg throws error for inaccessible directory',
+  { skip: isWindows },
+  async function (t) {
+    t.plan(1)
 
-  const { teardown } = rig()
-  t.teardown(teardown)
+    const { teardown } = rig()
+    t.teardown(teardown)
 
-  const State = require('..')
-  const dir = path.join(os.tmpdir(), 'pear-test-inaccessible-' + Date.now())
-  fs.mkdirSync(dir, { recursive: true })
-  fs.chmodSync(dir, 0o000)
-  t.teardown(() => {
-    fs.chmodSync(dir, 0o755)
-    fs.rmSync(dir, { recursive: true, force: true })
-  })
+    const State = require('..')
+    const dir = path.join(os.tmpdir(), 'pear-test-inaccessible-' + Date.now())
+    fs.mkdirSync(dir, { recursive: true })
+    fs.chmodSync(dir, 0o000)
+    t.teardown(() => {
+      fs.chmodSync(dir, 0o755)
+      fs.rmSync(dir, { recursive: true, force: true })
+    })
 
-  try {
-    await State.localPkg({ dir })
-    t.fail('localPkg should throw an error for inaccessible directory')
-  } catch (err) {
-    t.ok(err.code === 'EACCES' || err.code === 'EPERM', 'localPkg throws error for inaccessible directory')
+    try {
+      await State.localPkg({ dir })
+      t.fail('localPkg should throw an error for inaccessible directory')
+    } catch (err) {
+      t.ok(
+        err.code === 'EACCES' || err.code === 'EPERM',
+        'localPkg throws error for inaccessible directory'
+      )
+    }
   }
-})
+)
 
 test('State.appname returns pear.name if present', async function (t) {
   t.plan(1)
@@ -361,7 +396,13 @@ test('state.link', async function (t) {
   const State = require('..')
 
   t.is(new State({ link: '/a/b/c', flags: {} }).link, 'file:///a/b/c')
-  t.is(new State({ link: 'pear://b9abnxwa71999xsweicj6ndya8w9w39z7ssg43pkohd76kzcgpmo/check?query', flags: {} }).link, 'pear://b9abnxwa71999xsweicj6ndya8w9w39z7ssg43pkohd76kzcgpmo/check?query')
+  t.is(
+    new State({
+      link: 'pear://b9abnxwa71999xsweicj6ndya8w9w39z7ssg43pkohd76kzcgpmo/check?query',
+      flags: {}
+    }).link,
+    'pear://b9abnxwa71999xsweicj6ndya8w9w39z7ssg43pkohd76kzcgpmo/check?query'
+  )
   t.is(new State({ link: 'file:///a/b/c', flags: {} }).link, 'file:///a/b/c')
 })
 
@@ -375,9 +416,21 @@ test('state.applink', async function (t) {
 
   const State = require('..')
   const cwd = global.process?.cwd ?? os.cwd
-  t.is(new State({ dir: helloWorld, link: helloWorld, flags: {} }).applink, pathToFileURL(helloWorld).href)
-  t.is(new State({ dir: helloWorld, link: helloWorld + '/some/route', flags: {} }).applink, pathToFileURL(helloWorld).href)
-  t.is(new State({ link: 'pear://b9abnxwa71999xsweicj6ndya8w9w39z7ssg43pkohd76kzcgpmo/check?query', flags: {} }).applink, 'pear://b9abnxwa71999xsweicj6ndya8w9w39z7ssg43pkohd76kzcgpmo')
+  t.is(
+    new State({ dir: helloWorld, link: helloWorld, flags: {} }).applink,
+    pathToFileURL(helloWorld).href
+  )
+  t.is(
+    new State({ dir: helloWorld, link: helloWorld + '/some/route', flags: {} }).applink,
+    pathToFileURL(helloWorld).href
+  )
+  t.is(
+    new State({
+      link: 'pear://b9abnxwa71999xsweicj6ndya8w9w39z7ssg43pkohd76kzcgpmo/check?query',
+      flags: {}
+    }).applink,
+    'pear://b9abnxwa71999xsweicj6ndya8w9w39z7ssg43pkohd76kzcgpmo'
+  )
   t.is(new State({ link: 'file:///a/b/c#foo', flags: {} }).applink, pathToFileURL(cwd()).href)
 })
 
@@ -391,8 +444,17 @@ test('state.route', async function (t) {
 
   const State = require('..')
 
-  t.is(new State({ dir: helloWorld, link: helloWorld + '/some/route', flags: {} }).route, '/some/route')
-  t.is(new State({ link: 'pear://b9abnxwa71999xsweicj6ndya8w9w39z7ssg43pkohd76kzcgpmo/check?query', flags: {} }).route, '/check')
+  t.is(
+    new State({ dir: helloWorld, link: helloWorld + '/some/route', flags: {} }).route,
+    '/some/route'
+  )
+  t.is(
+    new State({
+      link: 'pear://b9abnxwa71999xsweicj6ndya8w9w39z7ssg43pkohd76kzcgpmo/check?query',
+      flags: {}
+    }).route,
+    '/check'
+  )
 })
 
 test('sets pid', async function (t) {
