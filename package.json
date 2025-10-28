@@ -5,7 +5,8 @@
   "type": "commonjs",
   "description": "Pear state",
   "license": "Apache-2.0",
-  "files": [],
+  "files": ["bare/", "node/"],
+  "author": "Holepunch Inc",
   "scripts": {
     "format": "prettier --write .",
     "lint": "prettier --check .",
@@ -49,5 +50,13 @@
     "pear-constants": "^1.0.0",
     "pear-link": "^4.1.0",
     "which-runtime": "^1.3.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/holepunchto/pear-state.git"
+  },
+  "bugs": {
+    "url": "https://github.com/holepunchto/pear-state/issues"
+  },
+  "homepage": "https://github.com/holepunchto/pear-state#readme"
 }
