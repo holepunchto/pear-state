@@ -5,7 +5,7 @@ const fsp = require('fs/promises')
 const path = require('path')
 const hypercoreid = require('hypercore-id-encoding')
 const crypto = require('hypercore-crypto')
-const { PLATFORM_DIR, SWAP, RUNTIME } = require('pear-constants')
+const { PLATFORM_DIR, SWAP, RUNTIME, CURRENT_RUNTIME } = require('pear-constants')
 const CWD = isBare ? os.cwd() : process.cwd()
 const ENV = require('#env')
 const plink = require('pear-link')
@@ -22,6 +22,7 @@ module.exports = class State {
   checkpoint = null
   #onupdate = null
   runtime = RUNTIME
+  currentRuntime = CURRENT_RUNTIME
   reloadingSince = 0
   type = null
   entrypoints = null
@@ -153,7 +154,8 @@ module.exports = class State {
       dir,
       dht,
       prerunning,
-      version
+      version,
+      currentRuntime
     } = state
     const pearDir = PLATFORM_DIR
     const swapDir = SWAP
@@ -192,7 +194,8 @@ module.exports = class State {
       pearDir,
       swapDir,
       length: version?.length,
-      fork: version?.fork
+      fork: version?.fork,
+      currentRuntime
     }
   }
 
