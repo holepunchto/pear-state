@@ -57,10 +57,11 @@ module.exports = class State {
     if (state.manifest) return state.manifest
     const originDir = state.dir
     if (pkg === null && state.key === null) pkg = await this.localPkg(state)
-    if (pkg === null)
+    if (pkg === null) {
       throw ERR_INVALID_PROJECT_DIR(
         `"package.json not found from: ${originDir}. Pear project must have a package.json`
       )
+    }
     state.pkg = pkg
     state.options = state.pkg?.pear ?? {}
 
@@ -69,10 +70,11 @@ module.exports = class State {
     state.main = state.options.main ?? pkg?.main ?? 'index.js'
 
     const invalidName = /^[@/a-z0-9-_]+$/.test(state.name) === false
-    if (invalidName)
+    if (invalidName) {
       throw ERR_INVALID_APP_NAME(
         'App name must be lowercase and one word, and may contain letters, numbers, hyphens (-), underscores (_), forward slashes (/) and asperands (@).'
       )
+    }
 
     state.links = {
       ...Object.fromEntries(Object.entries(state.options.links ?? {})),
@@ -307,11 +309,12 @@ module.exports = class State {
       this.storage !== null &&
       this.storage.startsWith(this.dir) &&
       this.storage.includes(path.sep + 'pear' + path.sep + 'pear' + path.sep) === false
-    if (invalidStorage)
+    if (invalidStorage) {
       throw ERR_INVALID_APP_STORAGE(
         'Application Storage may not be inside the project directory. --store "' +
           this.storage +
           '" is invalid'
       )
+    }
   }
 }
