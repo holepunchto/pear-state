@@ -250,7 +250,8 @@ module.exports = class State {
     if (protocol === 'file:') pathname = pathname.slice(dir.length)
     const store = flags.tmpStore
       ? path.join(os.tmpdir(), crypto.randomBytes(16).toString('hex'))
-      : flags.store
+      : flags.store &&
+        (path.isAbsolute(flags.store) ? flags.store : path.resolve(os.cwd(), flags.store))
     this.#onupdate = onupdate
     this.startId = startId
     this.dht = dht
