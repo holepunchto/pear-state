@@ -88,6 +88,7 @@ module.exports = class State {
     state.unrouted = Array.from(new Set([...unrouted, ...state.entrypoints]))
     const { entrypoint, routed } = this.route(state)
     state.entrypoint = entrypoint
+    state.entry = state.entrypoint === '/' ? '/' + state.main : state.entrypoint
     state.routed = routed
     state.manifest = { ...pkg, pear: state.options }
     return state.manifest
