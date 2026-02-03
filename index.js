@@ -89,7 +89,7 @@ module.exports = class State {
     const { entrypoint, routed } = this.route(state)
     state.entrypoint = entrypoint
     state.routed = routed
-    state.manifest = { ...pkg, pear: state.options }
+    state.manifest = { ...pkg, main: state.main, pear: state.options }
     return state.manifest
   }
 
