@@ -90,7 +90,7 @@ module.exports = class State {
     state.entrypoint = entrypoint
     state.entry = state.entrypoint === '/' ? '/' + state.main : state.entrypoint
     state.routed = routed
-    state.manifest = { ...pkg, pear: state.options }
+    state.manifest = { ...pkg, main: state.main, pear: state.options }
     return state.manifest
   }
 
