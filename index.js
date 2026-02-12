@@ -15,6 +15,7 @@ const {
   ERR_INVALID_APP_NAME
 } = require('pear-errors')
 
+// Adding comment here to test github ci
 module.exports = class State {
   env = null
   channel = null
