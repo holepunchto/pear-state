@@ -473,3 +473,12 @@ test('sets pid', async function (t) {
     t.is(state.pid, undefined)
   }
 })
+
+test('sets runtime', async function (t) {
+  t.plan(1)
+  const { teardown } = rig()
+  t.teardown(teardown)
+  const State = require('..')
+  const state = new State({ flags: {} })
+  t.ok(state.runtime)
+})
